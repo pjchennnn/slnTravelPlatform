@@ -1,0 +1,224 @@
+﻿
+@model IEnumerable<prjTravelPlatformV3.Models.THotel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles {
+    <link href="~/lib/datatables/css/jquery.datatables.min.css" rel="stylesheet" />
+    <style>
+        thead {
+            background-color: lightslategrey;
+            color: black;
+        }
+    </style>
+}
+<h3>飯店管理</h3>
+
+<button id="t1" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#hotelPartial" onclick="getEditPartial(-1)">新增</button>
+
+<table class="table" id="tbHotel">
+    <thead>
+        <tr>
+            <th style="display: none">id</th>
+            <th>飯店名稱</th>
+            <th>飯店英文名稱</th>
+            <th>地址</th>
+            <th>電話</th>
+            <th>區域</th>
+            <th>統編</th>
+            <th>功能</th>
+        </tr>
+    </thead>
+</table>
+
+<!--新增-->
+@* <div class="modal fade" id="Create" tabindex=" -1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="create-modal">
+                @* 引入partial
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="btnSave">儲存</button>
+            </div>
+        </div>
+
+    </div>
+</div>  *@
+
+<!--編輯-->
+<div class="modal fade" id="hotelPartial" tabindex=" -1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="edit-modal">
+                @*引入partial*@
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/lib/datatables/js/jquery.datatables.min.js"></script>
+    <script src="//cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
+    <script>
+
+        const editModal = document.getElementById("edit-modal");
+        const createModal = document.getElementById("create-modal");
+
+        const btnSave = document.getElementById("btnSave");
+
+
+        const loadHotelData = () => {
+            $("#tbHotel").dataTable({
+                autoWidth: false,
+                ajax: {
+                    type: 'GET',
+                    url: "/Hotels/GetAll",
+                    dataSrc: function (json) { return json; }
+                },
+                columns: [
+                    { "data": "fHotelId", "visible": false },
+                    { "data": "fHotelName" },
+                    { "data": "fHotelEngName" },
+                    { "data": "fHotelAddress" },
+                    { "data": "fPhone" },
+                    { "data": "fRegion" },
+                    { "data": "fTexId" },
+                    {
+                        data: null,
+                        title: "功能",
+                        render: function (data, type, row) {
+                            return `<button id="t1" type = "button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#hotelPartial" onclick="getEditPartial(${row.fHotelId})">編輯</button> ` +
+                                '<button type="button" class="btn btn-danger btn-sm">刪除</button>'
+                        }
+                    },
+                ],
+                fixedHeader: { header: true },
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/zh-HANT.json'
+                },
+
+
+            })
+        }
+
+
+        //取得選取到的飯店資料
+        const getEditPartial = async (id) => {
+
+            const response = await fetch(`@Url.Content("~/Hotels/GetPartial")?id=${id}`);
+            const data = await response.text();
+            editModal.innerHTML = data
+        }
+
+        const sendFetchRequest = async (actionName) => {
+            
+            const formId = document.querySelector("form").getAttribute('id');
+            const formIdDOM = document.getElementById(`${formId}`)
+            const formData = new FormData(formIdDOM);
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            try {
+                const res = await fetch(`@Url.Content("~/Hotels/")`+ actionName , {
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    body: formData,
+                    method: 'POST'
+                });
+                if (!res.ok) {
+                    throw new Error(`${res.status}`)
+                }
+                const data = await res.json();
+
+                if (data.success) {
+                    console.log(data);
+                    //關閉modal
+                    var myModal = bootstrap.Modal.getInstance(hotelPartial);
+                    myModal.hide();
+                    //顯示訊息
+                    Swal.fire({
+                        title: "Success",
+                        text: data.message,
+                        icon: "success"
+                    });
+                    //刷新datatable
+                    $('#tbHotel').DataTable().ajax.reload();
+                } else {
+                    if (data.errors) {
+
+                        const errorHotelName = document.querySelector(`[data-valmsg-for="HotelName"]`);
+                        const errorPhone = document.querySelector(`[data-valmsg-for="Phone"]`);
+                        if (errorHotelName) {
+                            errorHotelName.textContent = data.errors.HotelName[0];
+                        }
+                        if (errorPhone) {
+                            errorPhone.textContent = data.errors.Phone[0];
+                        }
+                    }
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: "error",
+                    text: error.message,
+                    icon: "error"
+                });
+            }
+
+            // else {
+            //     try {
+            //         const res = await fetch(`@Url.Content("~/Hotels/Edit")`, {
+            //             headers: {
+            //                 'RequestVerificationToken': token
+            //             },
+            //             body: formData,
+            //             method: 'POST'
+            //         });
+            //         const data = await res.text();
+
+            //         if (!res.ok) {
+            //             throw new Error(`${data}，${res.status}`)
+            //         }
+
+            //         //關閉modal
+            //         var myModal = bootstrap.Modal.getInstance(Edit);
+            //         myModal.hide();
+
+            //         //顯示訊息
+            //         Swal.fire({
+            //             title: "Success",
+            //             text: data,
+            //             icon: "success"
+            //         });
+            //         //刷新datatable
+            //         $('#tbHotel').DataTable().ajax.reload();
+            //     } catch (error) {
+            //         Swal.fire({
+            //             title: "error",
+            //             text: error.message,
+            //             icon: "error"
+            //         });
+            //     }
+            // }
+        }
+
+
+        $(document).ready(() => {
+            loadHotelData();
+        })
+
+    </script>
+ }
+

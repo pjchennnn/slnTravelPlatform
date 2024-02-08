@@ -1,0 +1,95 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-prjTravelPlatformV3-da8974b6-2bdd-4830-8258-a00e183de641</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Areas\Customer\Data\**" />
+    <Compile Remove="Areas\Employee\Data\**" />
+    <Compile Remove="Areas\Employee\Models\**" />
+    <Compile Remove="Areas\Supplier\Data\**" />
+    <Compile Remove="Areas\Supplier\Models\**" />
+    <Content Remove="Areas\Customer\Data\**" />
+    <Content Remove="Areas\Employee\Data\**" />
+    <Content Remove="Areas\Employee\Models\**" />
+    <Content Remove="Areas\Supplier\Data\**" />
+    <Content Remove="Areas\Supplier\Models\**" />
+    <EmbeddedResource Remove="Areas\Customer\Data\**" />
+    <EmbeddedResource Remove="Areas\Employee\Data\**" />
+    <EmbeddedResource Remove="Areas\Employee\Models\**" />
+    <EmbeddedResource Remove="Areas\Supplier\Data\**" />
+    <EmbeddedResource Remove="Areas\Supplier\Models\**" />
+    <None Remove="Areas\Customer\Data\**" />
+    <None Remove="Areas\Employee\Data\**" />
+    <None Remove="Areas\Employee\Models\**" />
+    <None Remove="Areas\Supplier\Data\**" />
+    <None Remove="Areas\Supplier\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="bundleconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.15">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Customer\Controllers\Hotel\" />
+    <Folder Include="Areas\Customer\Controllers\Airline\" />
+    <Folder Include="Areas\Customer\Controllers\CarRent\" />
+    <Folder Include="Areas\Customer\Controllers\Customer\" />
+    <Folder Include="Areas\Customer\Controllers\Discount\" />
+    <Folder Include="Areas\Customer\Controllers\Employee\" />
+    <Folder Include="Areas\Customer\Controllers\ExchangeItem\" />
+    <Folder Include="Areas\Customer\Controllers\Visa\" />
+    <Folder Include="Areas\Customer\Controllers\TravelPlan\" />
+    <Folder Include="Areas\Customer\Controllers\Supplier\" />
+    <Folder Include="Areas\Customer\Controllers\Question\" />
+    <Folder Include="Areas\Customer\Controllers\Product\" />
+    <Folder Include="Areas\Customer\Controllers\Notification\" />
+    <Folder Include="Areas\Employee\ViewModels\Airline\" />
+    <Folder Include="Areas\Employee\ViewModels\CarRent\" />
+    <Folder Include="Areas\Employee\ViewModels\Customer\" />
+    <Folder Include="Areas\Employee\ViewModels\Discount\" />
+    <Folder Include="Areas\Employee\ViewModels\Employee\" />
+    <Folder Include="Areas\Employee\ViewModels\ExchangeItem\" />
+    <Folder Include="Areas\Employee\ViewModels\Notification\" />
+    <Folder Include="Areas\Employee\ViewModels\Product\" />
+    <Folder Include="Areas\Employee\ViewModels\Question\" />
+    <Folder Include="Areas\Employee\ViewModels\Supplier\" />
+    <Folder Include="Areas\Employee\ViewModels\TravelPlan\" />
+    <Folder Include="Areas\Employee\ViewModels\Visa\" />
+    <Folder Include="Areas\Supplier\Controllers\Airline\" />
+    <Folder Include="Areas\Supplier\Controllers\CarRent\" />
+    <Folder Include="Areas\Supplier\Controllers\Customer\" />
+    <Folder Include="Areas\Supplier\Controllers\Discount\" />
+    <Folder Include="Areas\Supplier\Controllers\Employee\" />
+    <Folder Include="Areas\Supplier\Controllers\ExchangeItem\" />
+    <Folder Include="Areas\Supplier\Controllers\Hotel\" />
+    <Folder Include="Areas\Supplier\Controllers\Notification\" />
+    <Folder Include="Areas\Supplier\Controllers\Product\" />
+    <Folder Include="Areas\Supplier\Controllers\Question\" />
+    <Folder Include="Areas\Supplier\Controllers\Supplier\" />
+    <Folder Include="Areas\Supplier\Controllers\TravelPlan\" />
+    <Folder Include="Areas\Supplier\Controllers\Visa\" />
+    <Folder Include="Areas\Supplier\Views\" />
+  </ItemGroup>
+
+</Project>
