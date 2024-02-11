@@ -73,10 +73,9 @@
     
     <script src="//cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
     <script>
-
+        let fid = -1;
         const editModal = document.getElementById("edit-modal");
         const createModal = document.getElementById("create-modal");
-        const travelerPartial = document.getElementById('travelerPartial');
 
         const btnSave = document.getElementById("btnSave");
 
@@ -132,16 +131,20 @@
             const productName = document.getElementById('FProductId').options[document.getElementById('FProductId').selectedIndex].text;
             getPrInEnByName(productName);
 
-            getTravelerInfoPartial(fId);
+            fid = fId;
         }
 
 
-        const getTravelerInfoPartial = async (fId) => {
+        const getTravelerInfoPartial = async (e,fId) => {
+            event.preventDefault();
             const response = await fetch(`@Url.Content("~/Employee/VOrder/GetTravelerInfoPartial")?id=${fId}`);
             const data = await response.text();
-            travelerPartial.innerHTML = data;
+            e.target.parentNode.nextElementSibling.innerHTML = data;
         }
-
+        // const getTravelerInfoPartial = (e) => {
+        //     event.preventDefault();
+        //     console.log(e.target.parentNode.nextElementSibling)
+        // }
 
 
 

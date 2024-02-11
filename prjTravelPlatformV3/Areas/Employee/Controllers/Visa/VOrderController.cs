@@ -95,7 +95,7 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
             {
                 return NotFound();
             }
-            var travelers = _context.TVtravelerInfos.Where(t => t.FOrderId == id);
+            var travelers = _context.TVtravelerInfos.Where(t => t.FOrderId == id).ToList();
             if (travelers == null || travelers.Count() == 0)
             {
                 return NotFound();
