@@ -1,4 +1,4 @@
-﻿@model prjTravelPlatformV3.Models.TVtravelerInfo
+﻿@model ICollection<prjTravelPlatformV3.Models.TVtravelerInfo>
 
 
 @* <div class="row">
@@ -32,4 +32,46 @@
 </div> *@
 
 
-<h1>@ViewBag.formId</h1>
+@* <h1>@ViewBag.formId</h1> *@
+
+
+@{
+    var index = 0;
+}
+
+
+@foreach (var travelerInfo in Model)
+{
+    <tr>
+        <td><input asp-for="@travelerInfo.FName" class="form-control"></td>
+        <td>
+            @if (travelerInfo.FGender.HasValue)
+            {
+                if (travelerInfo.FGender.Value)
+                {
+                    <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" checked />
+                    <label for="male_@index">男</label>
+                    <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
+                    <label for="female_@index">女</label>
+                }
+                else
+                {
+                    <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
+                    <label for="male_@index">男</label>
+                    <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" checked />
+                    <label for="female_@index">女</label>
+                }
+            }
+            else
+            {
+                <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
+                <label for="male_@index">男</label>
+                <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
+                <label for="female_@index">女</label>
+            }
+        </td>
+        <td class="d-none"><input asp-for="@travelerInfo.FGender" class="form-control"></td>
+        <td><input asp-for="@travelerInfo.FBirthDate" class="form-control" onfocus="showDatePicker(this)"></td>
+    </tr>
+    index++;
+}

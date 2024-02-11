@@ -89,14 +89,14 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
         {
             if (id == 0)
             {
-                return PartialView("_TravelerInfoPartial", new TVtravelerInfo());
+                return PartialView("_TravelerInfoPartial", new List<TVtravelerInfo> { new TVtravelerInfo() });
             }
             if (_context.TVtravelerInfos == null)
             {
                 return NotFound();
             }
             var travelers = _context.TVtravelerInfos.Where(t => t.FOrderId == id);
-            if (travelers == null)
+            if (travelers == null || travelers.Count() == 0)
             {
                 return NotFound();
             }
