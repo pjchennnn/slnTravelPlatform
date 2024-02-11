@@ -101,94 +101,20 @@
                     <button onclick="newTr();" class="btn btn-info" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-circle-plus" style="font-size:0.8rem;"></i> 新增</button>
                     <button onclick="minusTr();" class="btn btn-danger btn-sm" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-trash" style="font-size:0.8rem"></i> 減少</button>
                 </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>姓名</th>
-                            <th>性別</th>
-                            <th class="d-none">性別</th>
-                            <th>生日</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody">
-                        @* @foreach (var travelerInfo in Model.TVtravelerInfos)
-                        {
-                            <tr>
-                                <td><input asp-for="@travelerInfo.FName" class="form-control"></td>
-                                <td>
-                                    @if (travelerInfo.FGender.HasValue)
-                                    {
-                                        if (travelerInfo.FGender.Value)
-                                        {
-                                            <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" checked />
-                                            <label for="M">男</label>
-                                            <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" />
-                                            <label for="F">女</label>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" />
-                                            <label for="M">男</label>
-                                            <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" checked />
-                                            <label for="F">女</label>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" />
-                                        <label for="M">男</label>
-                                        <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" />
-                                        <label for="F">女</label>
-                                    }
-                                </td>
-                                <td class="d-none"><input asp-for="@travelerInfo.FGender" class="form-control"></td>
-                                <td><input asp-for="@travelerInfo.FBirthDate" class="form-control" onfocus="showDatePicker(this)"></td>
-                            </tr>
-                        } *@
+                
+
+                @{
+                    // 设置 ViewBag 数据
+                    ViewBag.formId = @ViewBag.formId;
+                }
+
+                <div id="travelerPartial">
+
+                </div>
+
+                <partial name="_TravelerInfoPartial" model="Model.TVtravelerInfos" />
 
 
-                        @{
-                            var index = 0;
-                        }
-                        @foreach (var travelerInfo in Model.TVtravelerInfos)
-                        {
-                            <tr>
-                                <td><input asp-for="@travelerInfo.FName" class="form-control"></td>
-                                <td>
-                                    @if (travelerInfo.FGender.HasValue)
-                                    {
-                                        if (travelerInfo.FGender.Value)
-                                        {
-                                            <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" checked />
-                                            <label for="male_@index">男</label>
-                                            <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
-                                            <label for="female_@index">女</label>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
-                                            <label for="male_@index">男</label>
-                                            <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" checked />
-                                            <label for="female_@index">女</label>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
-                                        <label for="male_@index">男</label>
-                                        <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
-                                        <label for="female_@index">女</label>
-                                    }
-                                </td>
-                                <td class="d-none"><input asp-for="@travelerInfo.FGender" class="form-control"></td>
-                                <td><input asp-for="@travelerInfo.FBirthDate" class="form-control" onfocus="showDatePicker(this)"></td>
-                            </tr>
-                            index++;
-                        }
-
-
-                    </tbody>
-                </table>
             </div>
 
 

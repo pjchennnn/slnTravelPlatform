@@ -1,0 +1,35 @@
+﻿@model prjTravelPlatformV3.Models.TVtravelerInfo
+
+
+@* <div class="row">
+    <div class="col-md-4">
+        <form asp-action="_TravelerInfoPartial">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FOrderId" class="control-label"></label>
+                <select asp-for="FOrderId" class ="form-control" asp-items="ViewBag.FOrderId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FName" class="control-label"></label>
+                <input asp-for="FName" class="form-control" />
+                <span asp-validation-for="FName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FGender" class="control-label"></label>
+                <input asp-for="FGender" class="form-control" />
+                <span asp-validation-for="FGender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FBirthDate" class="control-label"></label>
+                <input asp-for="FBirthDate" class="form-control" />
+                <span asp-validation-for="FBirthDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div> *@
+
+
+<h1>@ViewBag.formId</h1>

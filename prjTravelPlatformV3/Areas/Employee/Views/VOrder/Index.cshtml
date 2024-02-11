@@ -58,9 +58,9 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <!-- 引入 jQuery 库 -->
+    <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- 引入 jQuery UI 库 -->
+    <!--jQuery UI-->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
@@ -76,6 +76,7 @@
 
         const editModal = document.getElementById("edit-modal");
         const createModal = document.getElementById("create-modal");
+        const travelerPartial = document.getElementById('travelerPartial');
 
         const btnSave = document.getElementById("btnSave");
 
@@ -130,7 +131,22 @@
 
             const productName = document.getElementById('FProductId').options[document.getElementById('FProductId').selectedIndex].text;
             getPrInEnByName(productName);
+
+            getTravelerInfoPartial(fId);
         }
+
+
+        const getTravelerInfoPartial = async (fId) => {
+            const response = await fetch(`@Url.Content("~/Employee/VOrder/GetTravelerInfoPartial")?id=${fId}`);
+            const data = await response.text();
+            travelerPartial.innerHTML = data;
+        }
+
+
+
+
+
+
         //根據傳入的action name呼叫對應的api
         const sendFetchRequest = async (actionName) => {
             //抓取目前的form id

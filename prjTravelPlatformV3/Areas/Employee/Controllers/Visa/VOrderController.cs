@@ -84,6 +84,28 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
             return PartialView("_ModalPartial", vo);
         }
 
+        //get travelerInfoPartial
+        public IActionResult GetTravelerInfoPartial(int? id)
+        {
+            if (id == 0)
+            {
+                return PartialView("_TravelerInfoPartial", new TVtravelerInfo());
+            }
+            if (_context.TVtravelerInfos == null)
+            {
+                return NotFound();
+            }
+            var travelers = _context.TVtravelerInfos.Where(t => t.FOrderId == id);
+            if (travelers == null)
+            {
+                return NotFound();
+            }
+            return PartialView("_TravelerInfoPartial", travelers);
+        }
+
+
+
+
 
         //新增資料
         [HttpPost]
