@@ -75,7 +75,6 @@
     <Folder Include="Areas\Employee\ViewModels\Question\" />
     <Folder Include="Areas\Employee\ViewModels\Supplier\" />
     <Folder Include="Areas\Employee\ViewModels\TravelPlan\" />
-    <Folder Include="Areas\Employee\ViewModels\Visa\" />
     <Folder Include="Areas\Supplier\Controllers\Airline\" />
     <Folder Include="Areas\Supplier\Controllers\CarRent\" />
     <Folder Include="Areas\Supplier\Controllers\Customer\" />
