@@ -5,11 +5,15 @@
 
 @section Styles {
     <link href="~/lib/datatables/css/jquery.datatables.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     
     <style>
         thead {
             background-color: lightslategrey;
             color: black;
+        }
+        .selected {
+            background-color: lightgray;
         }
     </style>
 }
@@ -58,10 +62,10 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <!-- 引入 jQuery 库 -->
+    <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- 引入 jQuery UI 库 -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--jQuery UI-->
+    
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
 
@@ -76,7 +80,7 @@
 
         const editModal = document.getElementById("edit-modal");
         const createModal = document.getElementById("create-modal");
-
+        let fid = -1;
         const btnSave = document.getElementById("btnSave");
 
 
@@ -99,9 +103,30 @@
                     { "data": "客戶名稱" },
                     { "data": "商品名稱" },
                     { "data": "總價" },
-                    { "data": "面試提醒" },
+                    {
+                        data: "面試提醒",
+                        title: "面試提醒",
+                        render: function (data, type, row) {
+                            if (data === true) {
+                                return "已提醒";
+                            } else if (data === false) {
+                                return "未提醒";
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
                     { "data": "訂單狀態" },
-                    { "data": "評價" },
+                    {
+                        data: "評價",
+                        render: function (data, type, row) {
+                            if (data === 0) {
+                                return "未評價";
+                            } else {
+                                return data + "顆星";
+                            }
+                        }
+                    },
                     {
                         data: null,
                         title: "功能",
@@ -124,15 +149,28 @@
 
         //取得partial view，新增跟編輯都呼叫這個function，新增id參數帶0，編輯是選到的那列資料的id
         const getEditPartial = async (fId) => {
+            //紀錄fId到全域變數
+            fid = fId;
             const response = await fetch(`@Url.Content("~/Employee/VOrder/GetPartial")?id=${fId}`);
             const data = await response.text();
             editModal.innerHTML = data;
-
             const productName = document.getElementById('FProductId').options[document.getElementById('FProductId').selectedIndex].text;
+            //刷新訂單內容
             getPrInEnByName(productName);
         }
         //根據傳入的action name呼叫對應的api
         const sendFetchRequest = async (actionName) => {
+
+
+
+            //檢查旅客資料
+            if (travelValidation()) { return; }
+
+
+
+
+
+
             //抓取目前的form id
             const formId = document.querySelector("form").getAttribute('id');
             //目前的form id的DOM元素
@@ -157,16 +195,27 @@
                 if (data.success) {
                     console.log(data);
                     //關閉modal
-                    var myModal = bootstrap.Modal.getInstance(VOrderPartial);
-                    myModal.hide();
+                    //var myModal = bootstrap.Modal.getInstance(VOrderPartial);
+                    //myModal.hide();
+
+                    //fetch旅客資料
+                    travelersFetch(actionName);
+
+
+
+                    
                     //顯示訊息
-                    Swal.fire({
-                        title: "Success",
-                        text: data.message,
-                        icon: "success"
-                    });
+                    // Swal.fire({
+                    //     title: "Success",
+                    //     text: data.message,
+                    //     icon: "success"
+                    // });
                     //刷新datatable
-                    $('#tbVOrder').DataTable().ajax.reload();
+                    //$('#tbVOrder').DataTable().ajax.reload();
+
+
+
+
                 } else {
                     //依自己的form增加需要驗證的欄位(驗證規則在partial view中)
                     const errorProductName = document.querySelector(`[data-valmsg-for="FProductId"]`);
@@ -174,6 +223,7 @@
                     const errorQuantity = document.querySelector(`[data-valmsg-for="FQuantity"]`);
                     const errorDepartureDate = document.querySelector(`[data-valmsg-for="FDepartureDate"]`);
                     const errorFCoupon = document.querySelector(`[data-valmsg-for="FCouponId"]`);
+                    const errorFStatus = document.querySelector(`[data-valmsg-for="FStatusId"]`);
                     if (errorProductName) {
                         errorProductName.textContent = data.errors.FProductId[0];
                     }
@@ -189,6 +239,9 @@
                     if (errorFCoupon) {
                         errorFCoupon.textContent = data.errors.FCouponId[0];
                     }
+                    if (errorFStatus) {
+                        errorFStatus.textContent = data.errors.FStatusId[0];
+                    }
                 }
             } catch (error) {
                 Swal.fire({
@@ -200,6 +253,73 @@
 
 
         }
+
+        const travelersFetch = async(actionName) => {
+            const tableData = collectDataFromTable();
+            try {
+                console.log(JSON.stringify(tableData))
+                const res = await fetch(`@Url.Content("~/Employee/VOrder/")` + actionName + 'Traveler', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(tableData)
+                });
+                if(!res.ok) {
+                    throw new Error(`${res.status}`)
+                }
+                const data = await res.json();
+
+                if (data.success) {
+                    console.log(data);
+                    //關閉modal
+                    var myModal = bootstrap.Modal.getInstance(VOrderPartial);
+                    myModal.hide();
+                    //顯示訊息
+                    Swal.fire({
+                        title: "Success",
+                        text: data.message,
+                        icon: "success"
+                    });
+                    //刷新datatable
+                    $('#tbVOrder').DataTable().ajax.reload();
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: "error",
+                    text: error.message,
+                    icon: "error"
+                });
+            }
+        }
+
+
+
+        //驗證travelerInfo表格
+        function travelValidation() {
+            const travelValidation = document.getElementById('travelValidation')
+            const data = collectDataFromTable()
+            const hasEmptyString = data.some(element => {
+                // 檢查物件的每個屬性是否為空字串
+                return Object.values(element).some(value => value === "");
+            });
+            if (hasEmptyString) {
+                const paragraph = document.createElement('p');
+                paragraph.textContent = '旅客資料不得有空';
+                paragraph.classList.add('d-inline');
+                paragraph.style.color = 'red';
+                paragraph.id = 'validationString';
+                if (!document.querySelector('#validationString')) {
+                    travelValidation.appendChild(paragraph);
+                }
+            }
+            return hasEmptyString;
+        }
+
+
+
+
+
 
         //查詢商品的價格、面試需求、實體or電子簽
         const getPrInEnByName = async (e) => {
@@ -214,10 +334,14 @@
                 document.getElementById('FPrice').value = data.price;
                 //判斷有沒有Interview
                 if (data.interview && interview.classList.contains('d-none')) { interview.classList.remove('d-none') }
-                if (!data.interview && !(interview.classList.contains('d-none'))) { interview.classList.add('d-none') }
+                if (!data.interview && !(interview.classList.contains('d-none'))) {
+                    interview.classList.add('d-none');
+                    const FInterviewReminder = document.getElementById('FInterviewReminder');
+                    FInterviewReminder.value = null;
+                }
                 //判斷是否為實體簽
                 if (data.entity && SorD.classList.contains('d-none')) { SorD.classList.remove('d-none') }
-                if (!data.entity && !(SorD.classList.contains('d-none'))) { SorD.classList.add('d-none') }
+                if (!data.entity && !(SorD.classList.contains('d-none'))) { SorD.classList.add('d-none'); }
                 //算總價
                 getTotal();
             }
@@ -277,19 +401,26 @@
             // 添加<td>元素及其內容
             newRow.innerHTML = `
                 <td><input class="form-control" type="text" id="travelerInfo_FName_${count}" name="travelerInfo_FName_${count}"></td>
-                <td>
+                <td class="align-middle">
                     <input type="radio" id="male_${count}" name="gender_${count}" value="True" onchange="changeGender(event)" />
-                    <label for="male_${count}">男</label>
+                    <label for="male_${count}" style="margin-bottom:0;">男</label>
                     <input type="radio" id="female_${count}" name="gender_${count}" value="False" onchange="changeGender(event)" />
-                    <label for="female_${count}">女</label>
+                    <label for="female_${count}" style="margin-bottom:0;">女</label>
                 </td>
                 <td class="d-none"><input class="form-control" type="text" id="travelerInfo_FGender_${count}" name="travelerInfo_FGender_${count}"></td>
                 <td><input class="form-control" onfocus="showDatePicker(this)" type="text" id="travelerInfo_FBirthDate_${count}" name="travelerInfo_FBirthDate_${count}"></td>
             `;
 
+            //加上select事件監聽
+            newRow.addEventListener('click', function () {
+                selectedRow(this);
+            });
+
+
             // 將新的<tr>元素添加到<tbody>中
             tbody.appendChild(newRow);
 
+            //更新購買數量
             resetQuantity(tbody.rows.length);
             getTotal();
         }
@@ -306,6 +437,53 @@
             getTotal()
         }
 
+
+        //表格selectedRow
+        function selectedRow(e) {
+            const children = e.parentNode.children;
+            if (e.classList.contains('selected')) {
+                e.classList.remove('selected');
+                return;
+            }
+            for (let i = 0; i < children.length; i++) {
+                const child = children[i];
+                if (child.classList.contains('selected')) {
+                    child.classList.remove('selected');
+                }
+            }
+            e.classList.add('selected')
+        }
+
+        //刪除被選擇表格列
+        function deleteTr() {
+            event.preventDefault();
+            const tbody = document.getElementById('tbody');
+            const selectedRow = tbody.querySelector('.selected');
+            if (selectedRow) { selectedRow.remove(); }
+        }
+
+        //收集表格資料
+        function collectDataFromTable() {
+            var data = [];
+            var tableRows = document.querySelectorAll('#tbody tr');
+
+            tableRows.forEach(function (row) {
+                var rowData = {};
+                var inputs = row.querySelectorAll('input');
+                rowData.FOrderId = fid;
+                rowData.FName = inputs[0].value;
+                rowData.FGender = inputs[1].checked;
+                rowData.FBirthDate = inputs[4].value;
+                data.push(rowData);
+            });
+
+            return data;
+        }
+
+
+
+
+
         //購買數量與旅客人數連動
         function resetQuantity(count) {
             const FQuantity = document.getElementById('FQuantity');
@@ -313,11 +491,11 @@
         }
 
         //取消按Enter的預設功能
-        function pre(e) {
-            if (e.key === 'Enter') {
-                event.preventDefault();
-            }
-        }
+        // function pre(e) {
+        //     if (e.key === 'Enter') {
+        //         event.preventDefault();
+        //     }
+        // }
 
         //旅客性別radio button連動
         function changeGender(e) {

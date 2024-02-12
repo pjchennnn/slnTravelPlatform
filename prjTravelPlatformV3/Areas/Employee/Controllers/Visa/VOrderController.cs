@@ -60,6 +60,7 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
             }
             VOrderViewModel vo = new VOrderViewModel
             {
+                FId = TVorder.FId,
                 FProductId = TVorder.FProductId,
                 FCustomerId = TVorder.FCustomerId,
                 FPrice = TVorder.FPrice,
@@ -108,21 +109,17 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
                         FMemo = vo.FMemo,
                         FStatusId = vo.FStatusId,
                         FCouponId = vo.FCouponId,
-                        TVtravelerInfos = vo.TVtravelerInfos
+                        //TVtravelerInfos = vo.TVtravelerInfos
                     };
                     _context.Add(tVorder);
                     await _context.SaveChangesAsync();
 
-                    //List<TVtravelerInfo> travelers = new List<TVtravelerInfo>();
-                    //travelers = vo.TVtravelerInfos.ToList();
-                    //_context.Add(travelers);
-                    //await _context.SaveChangesAsync();
 
-                    return Json(new { success = true, message = "新增資料成功" });
+                    return Json(new { success = true, message = "新增訂單成功" });
                 }
                 catch (Exception e)
                 {
-                    return Json(new { success = false, message = $"資料新增失敗：{e.Message}" });
+                    return Json(new { success = false, message = $"訂單新增失敗：{e.Message}" });
                 }
             }
             //驗證沒過            
@@ -161,7 +158,7 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
                         FMemo = vo.FMemo,
                         FStatusId = vo.FStatusId,
                         FCouponId = vo.FCouponId,
-                        TVtravelerInfos = vo.TVtravelerInfos
+                        //TVtravelerInfos = vo.TVtravelerInfos
                     };
                     _context.Update(tVorder);
                     await _context.SaveChangesAsync();
@@ -171,11 +168,11 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
                     //_context.Add(travelers);
                     //await _context.SaveChangesAsync();
 
-                    return Json(new { success = true, message = "資料修改成功" });
+                    return Json(new { success = true, message = "訂單修改成功" });
                 }
                 catch (Exception e)
                 {
-                    return Json(new { success = false, message = $"資料修改失敗: {e.Message}"});
+                    return Json(new { success = false, message = $"訂單修改失敗: {e.Message}"});
                 }
             }
 
@@ -191,6 +188,74 @@ namespace prjTravelPlatformV3.Areas.Employee.Controllers.Visa
                 message = "資料驗證失敗",
                 errors
             });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateTraveler([FromBody] List<TVtravelerInfo> travs)
+        {
+            //查vorder最新一筆的fid當作forderid
+            var id = _context.TVorders.OrderByDescending(o => o.FId).Select(o => o.FId).FirstOrDefault();
+            try
+            {
+                foreach (var trav in travs)
+                {
+                    TVtravelerInfo travelerInfo = new TVtravelerInfo
+                    {
+                        FOrderId = id,
+                        FName = trav.FName,
+                        FGender = trav.FGender,
+                        FBirthDate = trav.FBirthDate,
+                    };
+                    _context.Add(travelerInfo);
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "新增訂單與旅客成功" });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, message = $"新增訂單旅客失敗: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTraveler([FromBody] List<TVtravelerInfo> travs)
+        {
+            int id = travs[0].FOrderId;
+            var oldTravelers = _context.TVtravelerInfos.Where(t => t.FOrderId == id).ToList();
+            if (oldTravelers.Count != 0)
+            {
+                try
+                {
+                    _context.TVtravelerInfos.RemoveRange(oldTravelers);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    return Json(new { success = false, message = $"更改訂單與旅客失敗: {e.Message}" });
+                }
+            }
+
+
+            try
+            {
+                foreach (var trav in travs)
+                {
+                    TVtravelerInfo travelerInfo = new TVtravelerInfo
+                    {
+                        FOrderId = trav.FOrderId,
+                        FName = trav.FName,
+                        FGender = trav.FGender,
+                        FBirthDate = trav.FBirthDate,
+                    };
+                    _context.Update(travelerInfo);
+                }
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "更改訂單與旅客成功" });
+            }
+            catch (Exception e)
+            {
+                return Json(new { success = false, message = $"更改訂單與旅客失敗: {e.Message}" });
+            }
         }
     }
 }

@@ -9,23 +9,23 @@ namespace prjTravelPlatformV3.Areas.Employee.ViewModels.Visa
         public int FId { get; set; }
 
 
-        [Range(1, int.MaxValue, ErrorMessage = "請選擇商品")]
+        [Range(1, int.MaxValue, ErrorMessage = "未選擇商品")]
         [DisplayName("商品名稱")]
         public int FProductId { get; set; }
 
 
-        [Range(1, int.MaxValue, ErrorMessage = "請選填購買會員")]
+        [Range(1, int.MaxValue, ErrorMessage = "未選填購買會員")]
         [DisplayName("會員姓名")]
         public int FCustomerId { get; set; }
 
         [DisplayName("商品價格")]
         public decimal? FPrice { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "購買數為零，請新增旅客")]
+        [Range(1, int.MaxValue, ErrorMessage = "未新增旅客")]
         [DisplayName("購買數量")]
         public int FQuantity { get; set; }
 
-        [Required(ErrorMessage = "請選擇預計出國日")]
+        [Required(ErrorMessage = "未選擇預計出國日")]
         [DisplayName("預計出國日")]
         public string FDepartureDate { get; set; }
 
@@ -41,10 +41,11 @@ namespace prjTravelPlatformV3.Areas.Employee.ViewModels.Visa
         [DisplayName("備註")]
         public string? FMemo { get; set; }
 
+        [Range(1, int.MaxValue, ErrorMessage = "未選擇訂單狀態")]
         [DisplayName("訂單狀態")]
         public int? FStatusId { get; set; }
 
-        [Required(ErrorMessage = "請選擇使用優惠")]
+        [Range(1, int.MaxValue, ErrorMessage = "未選擇使用優惠")]
         [DisplayName("使用優惠")]
         public int? FCouponId { get; set; }
 

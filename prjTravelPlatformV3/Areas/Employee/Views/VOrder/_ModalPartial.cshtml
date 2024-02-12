@@ -57,7 +57,7 @@
                 </div>
                 <div class="mb-3 flex-grow-1">
                     <label asp-for="FMemo" class="form-label">@Html.DisplayNameFor(h => h.FMemo)</label>
-                    <textarea asp-for="FMemo" class="form-control"></textarea>
+                    <textarea asp-for="FMemo" class="form-control" rows="1" wrap="hard"></textarea>
                     <span asp-validation-for="FMemo" class="text-danger"></span>
                 </div>
             </div>
@@ -69,7 +69,10 @@
             </div>
             <div class="mb-3 d-none" id="interview">
                 <label asp-for="FInterviewReminder" class="form-label">@Html.DisplayNameFor(h => h.FInterviewReminder)</label>
-                <input asp-for="FInterviewReminder" class="form-control">
+                <select asp-for="FInterviewReminder" class="form-control">
+                    <option value=false>未提醒</option>
+                    <option value=true>已提醒</option>
+                </select>
                 <span asp-validation-for="FInterviewReminder" class="text-danger"></span>
             </div>
             <div class="d-flex">
@@ -83,6 +86,7 @@
                 <div class="mb-3 flex-grow-1">
                     <label asp-for="FEvaluate" class="form-label">@Html.DisplayNameFor(h => h.FEvaluate)</label>
                     <select asp-for="FEvaluate" class="form-control">
+                        <option value="0">未評價</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
@@ -96,10 +100,11 @@
 
 
             <div class="mb-3 flex-grow-1" style="padding-right:20px;">
-                <div class="d-flex;">
+                <div class="d-flex;" id="travelValidation">
                     <label asp-for="TVtravelerInfos" class="form-label">@Html.DisplayNameFor(h => h.TVtravelerInfos)</label>
-                    <button onclick="newTr();" class="btn btn-info" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-circle-plus" style="font-size:0.8rem;"></i> 新增</button>
-                    <button onclick="minusTr();" class="btn btn-danger btn-sm" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-trash" style="font-size:0.8rem"></i> 減少</button>
+                    <button onclick="newTr();" class="btn btn-info btn-sm" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-circle-plus" style="font-size:0.8rem;"></i> 新增</button>
+                    <button onclick="minusTr();" class="btn btn-danger btn-sm" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-circle-minus" style="font-size:0.8rem"></i> 減少</button>
+                    <button onclick="deleteTr();" class="btn btn-warning btn-sm" style="padding:8px 8px; margin:0 0 8px 4px;"><i class="fa-solid fa-trash" style="font-size:0.8rem"></i> 刪除</button>
                 </div>
                 <table class="table">
                     <thead>
@@ -111,73 +116,37 @@
                         </tr>
                     </thead>
                     <tbody id="tbody">
-                        @* @foreach (var travelerInfo in Model.TVtravelerInfos)
-                        {
-                            <tr>
-                                <td><input asp-for="@travelerInfo.FName" class="form-control"></td>
-                                <td>
-                                    @if (travelerInfo.FGender.HasValue)
-                                    {
-                                        if (travelerInfo.FGender.Value)
-                                        {
-                                            <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" checked />
-                                            <label for="M">男</label>
-                                            <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" />
-                                            <label for="F">女</label>
-                                        }
-                                        else
-                                        {
-                                            <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" />
-                                            <label for="M">男</label>
-                                            <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" checked />
-                                            <label for="F">女</label>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <input type="radio" id="male" name="@travelerInfo.FName" value=True onchange="changeGender(event)" />
-                                        <label for="M">男</label>
-                                        <input type="radio" id="felmale" name="@travelerInfo.FName" value=False onchange="changeGender(event)" />
-                                        <label for="F">女</label>
-                                    }
-                                </td>
-                                <td class="d-none"><input asp-for="@travelerInfo.FGender" class="form-control"></td>
-                                <td><input asp-for="@travelerInfo.FBirthDate" class="form-control" onfocus="showDatePicker(this)"></td>
-                            </tr>
-                        } *@
-
-
                         @{
                             var index = 0;
                         }
                         @foreach (var travelerInfo in Model.TVtravelerInfos)
                         {
-                            <tr>
+                            <tr onclick="selectedRow(this);">
                                 <td><input asp-for="@travelerInfo.FName" class="form-control"></td>
-                                <td>
+                                <td class="align-middle">
                                     @if (travelerInfo.FGender.HasValue)
                                     {
                                         if (travelerInfo.FGender.Value)
                                         {
                                             <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" checked />
-                                            <label for="male_@index">男</label>
+                                            <label for="male_@index" style="margin-bottom:0;">男</label>
                                             <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
-                                            <label for="female_@index">女</label>
+                                            <label for="female_@index" style="margin-bottom:0;">女</label>
                                         }
                                         else
                                         {
                                             <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
-                                            <label for="male_@index">男</label>
+                                            <label for="male_@index" style="margin-bottom:0;">男</label>
                                             <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" checked />
-                                            <label for="female_@index">女</label>
+                                            <label for="female_@index" style="margin-bottom:0;">女</label>
                                         }
                                     }
                                     else
                                     {
                                         <input type="radio" id="male_@index" name="Gender_@index" value="True" onchange="changeGender(event)" />
-                                        <label for="male_@index">男</label>
+                                        <label for="male_@index" style="margin-bottom:0;">男</label>
                                         <input type="radio" id="female_@index" name="Gender_@index" value="False" onchange="changeGender(event)" />
-                                        <label for="female_@index">女</label>
+                                        <label for="female_@index" style="margin-bottom:0;">女</label>
                                     }
                                 </td>
                                 <td class="d-none"><input asp-for="@travelerInfo.FGender" class="form-control"></td>
