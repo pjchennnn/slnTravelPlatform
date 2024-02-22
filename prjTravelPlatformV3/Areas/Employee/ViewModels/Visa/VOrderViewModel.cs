@@ -6,6 +6,7 @@ namespace prjTravelPlatformV3.Areas.Employee.ViewModels.Visa
 {
     public class VOrderViewModel
     {
+        
         public int FId { get; set; }
 
 
@@ -49,16 +50,44 @@ namespace prjTravelPlatformV3.Areas.Employee.ViewModels.Visa
         [DisplayName("使用優惠")]
         public int? FCouponId { get; set; }
 
-        //public virtual TCouponList FCoupon { get; set; }
 
-        //public virtual TCustomer FCustomer { get; set; }
-
-        //public virtual TVproduct FProduct { get; set; }
-
-        //public virtual TVorderStatus FStatus { get; set; }
-
-        [Required(ErrorMessage = "請寫入旅客資訊")]
         [DisplayName("旅客資料")]
         public virtual ICollection<TVtravelerInfo> TVtravelerInfos { get; set; } = new List<TVtravelerInfo>();
+
+        private string[]? _travelerInfos { get; set; }
+
+        [Required(ErrorMessage = "請寫入旅客資訊")]
+        public string[]? travelerInfos
+        {
+            get { return _travelerInfos; }
+            set
+            {
+                _travelerInfos = value;
+                TVtravelerInfos = conv(value);
+            }
+        }
+        private ICollection<TVtravelerInfo>? conv(string[]? travelers)
+        {
+            if (travelers ==  null)
+            {
+                return null;
+            }
+            int chunkSize = 4;
+            IEnumerable<string[]> travelersChunks = travelers.Select((value,index) => new { Index = index, Value = value})
+                .GroupBy(x => x.Index / chunkSize)
+                .Select(grp => grp.Select(x => x.Value).ToArray());
+            List<TVtravelerInfo> list = new List<TVtravelerInfo>();
+            foreach (var traveler in travelersChunks)
+            {
+                list.Add(new TVtravelerInfo
+                {
+                    FOrderId = Convert.ToInt32(traveler[0]),
+                    FName = traveler[1],
+                    FGender = Convert.ToBoolean(traveler[2]),
+                    FBirthDate = traveler[3]
+                });
+            }
+            return list;
+        }
     }
 }
